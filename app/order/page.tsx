@@ -11,8 +11,10 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { useCart } from "@/app/cart/CartContext" // CartContext 훅 import
 
 export default function OrderPage() {
+  const { cartItems } = useCart() // 장바구니 아이템 가져오기
   const [paymentMethod, setPaymentMethod] = useState("card")
   const [deliveryInfo, setDeliveryInfo] = useState({
     name: "",
@@ -23,34 +25,13 @@ export default function OrderPage() {
     memo: "",
   })
 
-  // 예시 주문 상품
-  const orderItems = [
-    {
-      id: 1,
-      name: "미니멀 블랙 티셔츠",
-      price: 45000,
-      quantity: 2,
-      image: "/black-minimal-tshirt.png",
-      size: "L",
-      color: "블랙",
-    },
-    {
-      id: 2,
-      name: "다크 슬림 진",
-      price: 89000,
-      quantity: 1,
-      image: "/dark-slim-jeans.png",
-      size: "32",
-      color: "다크그레이",
-    },
-  ]
-
-  const totalPrice = orderItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  // 장바구니 아이템 기준으로 가격 계산
+  const totalPrice = cartItems.reduce((sum, item) => sum + Number(item.price) * item.quantity, 0)
   const shippingFee = totalPrice >= 50000 ? 0 : 3000
   const finalPrice = totalPrice + shippingFee
 
   const handleOrder = () => {
-    console.log("주문 처리:", { deliveryInfo, paymentMethod, orderItems })
+    console.log("주문 처리:", { deliveryInfo, paymentMethod, cartItems })
     alert("주문이 완료되었습니다!")
   }
 
@@ -158,14 +139,7 @@ export default function OrderPage() {
                     <RadioGroupItem value="kakaopay" id="kakaopay" className="border-gray-600 text-white" />
                     <Label htmlFor="kakaopay" className="flex items-center text-white cursor-pointer">
                       <MessageCircle className="w-5 h-5 mr-2" />
-                      카카오페이
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-3 p-4 border border-gray-700 rounded-lg">
-                    <RadioGroupItem value="phone" id="phone" className="border-gray-600 text-white" />
-                    <Label htmlFor="phone" className="flex items-center text-white cursor-pointer">
-                      <Smartphone className="w-5 h-5 mr-2" />
-                      휴대폰 결제
+                      계좌이체
                     </Label>
                   </div>
                 </RadioGroup>
@@ -181,11 +155,11 @@ export default function OrderPage() {
                 <CardTitle className="text-white">주문 상품</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {orderItems.map((item) => (
-                  <div key={item.id} className="flex items-center space-x-3">
+                {cartItems.map((item) => (
+                  <div key={`${item.id}-${item.size}-${item.color}`} className="flex items-center space-x-3">
                     <div className="w-16 h-16 relative rounded-lg overflow-hidden">
                       <Image
-                        src={item.image || "/placeholder.svg"}
+                        src={item.imageUrl || "/placeholder.svg"}
                         alt={item.name}
                         fill
                         className="object-cover"
@@ -197,7 +171,7 @@ export default function OrderPage() {
                         {item.size} | {item.color} | {item.quantity}개
                       </p>
                       <p className="text-white font-bold text-sm">
-                        {(item.price * item.quantity).toLocaleString()}원
+                        {(Number(item.price) * item.quantity).toLocaleString()}원
                       </p>
                     </div>
                   </div>
@@ -233,7 +207,7 @@ export default function OrderPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Search, ShoppingBag, User, Menu, X, ChevronRight } from 'lucide-react'
 import { Button } from "@/components/ui/button"
@@ -10,6 +10,17 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
+  const [cartQuantity, setCartQuantity] = useState(0)
+
+  // 예시: localStorage 혹은 API에서 실제 장바구니 수량 가져오기
+  useEffect(() => {
+    const storedCart = localStorage.getItem('cart')
+    if (storedCart) {
+      const cartItems = JSON.parse(storedCart)
+      const totalQuantity = cartItems.reduce((acc: number, item: any) => acc + item.quantity, 0)
+      setCartQuantity(totalQuantity)
+    }
+  }, [])
 
   const categories = [
     { name: "상의", href: "/category/3", iconSrc: "/상의.png" },
@@ -26,7 +37,6 @@ export function Header() {
           <div className="flex items-center justify-between h-16">
             {/* Left Section - Hamburger Menu + Logo */}
             <div className="flex items-center space-x-4">
-              {/* Hamburger Menu */}
               <Button
                 variant="ghost"
                 size="icon"
@@ -35,8 +45,6 @@ export function Header() {
               >
                 <Menu className="w-5 h-5" />
               </Button>
-
-              {/* Logo */}
               <Link href="/" className="text-2xl font-bold text-white hover:text-gray-300 transition-colors">
                 MUST DARK
               </Link>
@@ -81,7 +89,6 @@ export function Header() {
 
             {/* Right Section - User Menu + Cart + Login */}
             <div className="flex items-center space-x-3">
-              {/* User Menu */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white hover:bg-gray-800 transition-all duration-200">
@@ -106,9 +113,11 @@ export function Header() {
               <Link href="/cart">
                 <Button variant="ghost" size="icon" className="text-gray-300 hover:text-white hover:bg-gray-800 relative transition-all duration-200">
                   <ShoppingBag className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 bg-white text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
-                    3
-                  </span>
+                  {cartQuantity > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-white text-black text-xs rounded-full w-5 h-5 flex items-center justify-center font-semibold">
+                      {cartQuantity}
+                    </span>
+                  )}
                 </Button>
               </Link>
 
@@ -177,16 +186,12 @@ export function Header() {
       {/* Category Sidebar Menu */}
       {isCategoryMenuOpen && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/50 z-50 animate-in fade-in duration-200"
             onClick={() => setIsCategoryMenuOpen(false)}
           />
-          
-          {/* Sidebar */}
           <div className="fixed left-0 top-0 h-full w-80 bg-gray-900 z-50 animate-in slide-in-from-left duration-300 border-r border-gray-800">
             <div className="p-6">
-              {/* Header */}
               <div className="flex items-center justify-between mb-8">
                 <h2 className="text-xl font-bold text-white">카테고리</h2>
                 <Button
@@ -198,8 +203,6 @@ export function Header() {
                   <X className="w-5 h-5" />
                 </Button>
               </div>
-
-              {/* Categories */}
               <nav className="space-y-2">
                 {categories.map((category) => (
                   <Link
@@ -216,8 +219,6 @@ export function Header() {
                   </Link>
                 ))}
               </nav>
-
-              {/* Bottom Section */}
               <div className="absolute bottom-6 left-6 right-6">
                 <div className="bg-gray-800 rounded-lg p-4 text-center">
                   <p className="text-gray-400 text-sm mb-2">어둠 속에서 빛나는 스타일</p>
