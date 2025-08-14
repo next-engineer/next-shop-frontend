@@ -37,6 +37,8 @@ export default function SignupPage() {
     email: { isValid: false, message: "" },
     password: { isValid: false, message: "" },
     confirmPassword: { isValid: false, message: "" },
+    name: { isValid: false, message: "" },
+    phone: { isValid: false, message: "" },
   })
 
   const handleInputChange = (field: string, value: string) => {
@@ -55,6 +57,8 @@ export default function SignupPage() {
       case 'email': validateEmail(value); break
       case 'password': validatePassword(value); break
       case 'confirmPassword': validateConfirmPassword(value); break
+      case 'name': validateName(value); break
+      case 'phone': validatePhone(value); break
     }
   }
 
@@ -84,6 +88,26 @@ export default function SignupPage() {
       confirmPassword: confirmPassword === formData.password
         ? { isValid: true, message: "비밀번호가 일치합니다." }
         : { isValid: false, message: "비밀번호가 일치하지 않습니다." }
+    }))
+  }
+
+  const validateName = (name: string) => {
+    const nameRegex = /^[가-힣]{3,6}$/;
+    setValidation(prev => ({
+      ...prev,
+      name: nameRegex.test(name)
+        ? { isValid: true, message: "사용 가능한 이름입니다." }
+        : { isValid: false, message: "한글 3~6글자여야 합니다." }
+    }))
+  }
+
+  const validatePhone = (phone: string) => {
+    const phoneRegex = /^01[016789]-?\d{3,4}-?\d{4}$/;
+    setValidation(prev => ({
+      ...prev,
+      phone: phoneRegex.test(phone)
+        ? { isValid: true, message: "사용 가능한 전화번호입니다." }
+        : { isValid: false, message: "올바른 전화번호 형식이 아닙니다." }
     }))
   }
 
@@ -134,7 +158,7 @@ export default function SignupPage() {
               </div>
 
               {/* 이름 */}
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <Label htmlFor="name">이름 *</Label>
                 <Input
                   id="name"
@@ -143,12 +167,15 @@ export default function SignupPage() {
                   onChange={(e) => handleInputChange('name', e.target.value)}
                   placeholder="이름을 입력하세요"
                   required
-                  className="bg-gray-800 border-gray-700 text-white h-12 rounded-lg"
+                  className="bg-gray-800 border-gray-700 text-white h-12 rounded-lg pr-10"
                 />
+                <div className="absolute right-3 top-9">
+                  {validation.name.isValid ? <Check className="text-green-500" /> : formData.name && <X className="text-red-500" />}
+                </div>
               </div>
 
               {/* 전화번호 */}
-              <div className="space-y-2">
+              <div className="space-y-2 relative">
                 <Label htmlFor="phone">전화번호 *</Label>
                 <Input
                   id="phone"
@@ -157,8 +184,11 @@ export default function SignupPage() {
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   placeholder="전화번호를 입력하세요"
                   required
-                  className="bg-gray-800 border-gray-700 text-white h-12 rounded-lg"
+                  className="bg-gray-800 border-gray-700 text-white h-12 rounded-lg pr-10"
                 />
+                <div className="absolute right-3 top-9">
+                  {validation.phone.isValid ? <Check className="text-green-500" /> : formData.phone && <X className="text-red-500" />}
+                </div>
               </div>
 
               {/* 주소 */}
@@ -259,7 +289,7 @@ export default function SignupPage() {
                     onCheckedChange={(checked) => setAgreements(prev => ({ ...prev, marketing: !!checked }))}
                   />
                   <Label htmlFor="marketing" className="text-white">
-                    [선택] 마케팅 정보 수신 동의
+                    [선택] 마케팅 정보 수신 동의              
                   </Label>
                 </div>
               </div>
