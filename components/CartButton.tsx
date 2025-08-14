@@ -1,5 +1,3 @@
-// app/(어디)/ProductGrid.tsx
-
 import Image from "next/image"
 import Link from "next/link"
 import { apiGet } from "@/lib/api"

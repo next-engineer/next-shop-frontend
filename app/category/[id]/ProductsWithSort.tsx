@@ -56,7 +56,7 @@ export default function ProductsWithSort({ products }: { products: Product[] }) 
 
   return (
     <>
-      <div className="mb-4 flex justify-end items-center relative" ref={dropdownRef}>
+      <div className="mb-4 flex justify-end items-center relative mb-4" ref={dropdownRef}>
         <button
           onClick={() => setDropdownOpen((prev) => !prev)}
           className="px-3 py-1 border rounded bg-gray-800 text-white flex items-center space-x-2"

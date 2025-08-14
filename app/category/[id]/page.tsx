@@ -35,8 +35,8 @@ export default async function CategoryPage(
   const categoryName = categoryNames[id] || `카테고리 #${id}`
 
   return (
-    <main className="container py-8">
-      <h1 className="text-2xl font-bold mb-6">{categoryName}</h1>
+    <main className="container pt-4 pb-12">
+  <h1 className="text-2xl font-bold mb-0">{categoryName}</h1>
       {/* @ts-expect-error Async Server Component -> 클라이언트 컴포넌트 */}
       <ProductsWithSort products={products} />
     </main>

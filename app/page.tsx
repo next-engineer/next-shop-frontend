@@ -1,6 +1,6 @@
 import { Header } from "@/components/header"
 import { HeroSection } from "@/components/hero-section"
-import { ProductGrid } from "@/components/product-grid"
+import ProductGrid from "@/components/product-grid"
 import { RecentlyViewed } from "@/components/recently-viewed"
 import { Footer } from "@/components/footer"
 
@@ -12,7 +12,7 @@ export default function HomePage() {
 
       <main>
         <HeroSection />
-        <ProductGrid />
+        <ProductGrid /> {/* 카테고리별 최신 상품 12개 */}
         <RecentlyViewed />
       </main>
 

@@ -2,31 +2,33 @@ import Image from "next/image"
 import Link from "next/link"
 import { apiGet } from "@/lib/api"
 
-type Product = { id: number; name: string; price: number | string; imageUrl?: string; category: string }
+type Product = { 
+  id: number; 
+  name: string; 
+  price: number | string; 
+  imageUrl?: string; 
+  categoryId: string 
+}
 type Page<T> = { content: T[] }
 
-export async function ProductGrid() {
-  const page = await apiGet<Page<Product>>("/api/products", { page: 0, size: 100 })
-  const products = page.content
+const categoryIds = ["1", "2", "3", "4", "5"]
 
-  // 1. 카테고리별로 그룹화
-  const categoryMap: Record<string, Product[]> = {}
-  for (const p of products) {
-    if (!categoryMap[p.category]) categoryMap[p.category] = []
-    categoryMap[p.category].push(p)
+export default async function ProductGrid() {
+  const allCategoryProducts: Product[][] = []
+
+  // 각 카테고리별로 최신 3개씩 가져오기
+  for (const id of categoryIds) {
+    const page = await apiGet<Page<Product>>("/api/products", { categoryId: id, page: 0, size: 3 })
+    const sorted = page.content.sort((a, b) => b.id - a.id).slice(0, 3)
+    allCategoryProducts.push(sorted)
   }
 
-  // 2. 각 카테고리별 최신 2~3개 선택
-  const categoryArrays = Object.values(categoryMap).map(arr =>
-    arr.sort((a, b) => b.id - a.id).slice(0, 3)
-  )
-
-  // 3. 카테고리별 배열을 round-robin 방식으로 섞기
+  // round-robin 방식으로 섞어서 다양한 카테고리 상품 섞기
   const shuffled: Product[] = []
   let added
   do {
     added = false
-    for (const arr of categoryArrays) {
+    for (const arr of allCategoryProducts) {
       if (arr.length > 0) {
         shuffled.push(arr.shift()!)
         added = true
@@ -34,7 +36,7 @@ export async function ProductGrid() {
     }
   } while (added)
 
-  // 4. 총 12개까지만
+  // 최대 12개만 출력
   const result = shuffled.slice(0, 12)
 
   return (
@@ -43,19 +45,38 @@ export async function ProductGrid() {
         <h2 className="text-2xl font-bold mb-6">추천 상품</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {result.map((p) => (
-            <div key={p.id} className="group border border-gray-800 rounded-xl overflow-hidden hover:shadow-xl transition-shadow">
-              <Link href={`/product/${p.id}`} className="relative aspect-square block">
-                <Image
-                  src={p.imageUrl || "/placeholder.svg"}
-                  alt={p.name}
-                  fill
-                  sizes="(max-width: 768px) 50vw, 25vw"
-                  className="object-cover"
-                />
-              </Link>
-              <div className="p-3">
-                <div className="font-semibold mb-1">{p.name}</div>
-                <div className="text-gray-300">{Number(p.price).toLocaleString()}원</div>
+            <div
+              key={p.id}
+              className="group relative bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-all duration-300 flex flex-col"
+            >
+              {/* 이미지 영역: aspect-square 유지, 카드 높이 통일 */}
+              <div className="relative w-full aspect-square overflow-hidden">
+                <Link href={`/product/${p.id}`} className="block w-full h-full">
+                  <Image
+                    src={p.imageUrl || "/placeholder.svg"}
+                    alt={p.name}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </Link>
+              </div>
+
+              {/* 내용 영역: flex-col + flex-1 + justify-between */}
+              <div className="p-3 flex flex-col flex-1 justify-between">
+                <div>
+                  <div className="font-semibold text-white">{p.name}</div>
+                  <div className="text-gray-300">{Number(p.price).toLocaleString()}원</div>
+                </div>
+
+                {/* 상세보기 버튼 하단 왼쪽 고정 */}
+                <div className="mt-3 text-left">
+                  <Link
+                    href={`/product/${p.id}`}
+                    className="text-blue-400 hover:underline"
+                  >
+                    상세보기
+                  </Link>
+                </div>
               </div>
             </div>
           ))}
