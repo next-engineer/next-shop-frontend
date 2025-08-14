@@ -21,20 +21,25 @@
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
-    "/orders/page": [
+    "/category/[id]/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/orders/page.js"
+      "static/chunks/app/category/[id]/page.js"
     ],
-    "/search/page": [
+    "/about/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/search/page.js"
+      "static/chunks/app/about/page.js"
     ],
     "/cart/page": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/cart/page.js"
+    ],
+    "/mypage/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/mypage/page.js"
     ],
     "/product/[id]/page": [
       "static/chunks/webpack.js",

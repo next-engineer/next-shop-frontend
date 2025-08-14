@@ -113,27 +113,6 @@ export default function LoginPage() {
               </span>
             </div>
 
-            <div className="space-y-3">
-              <Button
-                onClick={() => setShowSocialLogin("kakao")}
-                className="w-full bg-yellow-400 text-black hover:bg-yellow-500 h-12 rounded-lg font-semibold transition-all duration-200"
-              >
-                카카오로 로그인
-              </Button>
-              <Button
-                onClick={() => setShowSocialLogin("naver")}
-                className="w-full bg-green-500 text-white hover:bg-green-600 h-12 rounded-lg font-semibold transition-all duration-200"
-              >
-                네이버로 로그인
-              </Button>
-              <Button
-                onClick={() => setShowSocialLogin("google")}
-                className="w-full bg-white text-black hover:bg-gray-200 h-12 rounded-lg font-semibold transition-all duration-200"
-              >
-                구글로 로그인
-              </Button>
-            </div>
-
             <div className="mt-8 text-center">
               <p className="text-gray-400 mb-4">
                 계정이 없으신가요?
@@ -175,36 +154,6 @@ export default function LoginPage() {
         </div>
       )}
 
-      {/* 소셜 로그인 팝업 */}
-      {showSocialLogin && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-gray-900 rounded-2xl p-8 max-w-md w-full">
-            <h3 className="text-xl font-bold mb-6">{showSocialLogin} 로그인</h3>
-            <div className="space-y-4">
-              <Input
-                type="email"
-                placeholder={`${showSocialLogin} 이메일`}
-                className="bg-gray-800 border-gray-700 text-white"
-              />
-              <Input
-                type="password"
-                placeholder="비밀번호"
-                className="bg-gray-800 border-gray-700 text-white"
-              />
-              <Button className="w-full bg-white text-black hover:bg-gray-200">
-                로그인
-              </Button>
-              <Button
-                onClick={() => setShowSocialLogin(null)}
-                variant="outline"
-                className="w-full border-gray-600 text-white hover:bg-gray-800 bg-transparent"
-              >
-                취소
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

@@ -1,7 +1,7 @@
 import React from "react"
-import ProductsWithSort from "./ProductsWithSort"  // 경로 확인하세요
+import ProductsWithSort from "./ProductsWithSort"
 
-type Product = { id: number; name: string; price: number | string; imageUrl?: string }
+type Product = { id: number; name: string; price: number | string; imageUrl?: string; createdAt?: string }
 type Page<T> = { content: T[] }
 
 async function apiGet<T>(path: string, params?: Record<string, string | number>) {
@@ -26,19 +26,16 @@ const categoryNames: Record<string, string> = {
   "5": "아우터",
 }
 
-export default async function CategoryPage(
-  { params }: { params: Promise<{ id: string }> }
-) {
+export default async function CategoryPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const products = await fetchProductsByCategoryId(id)
-
   const categoryName = categoryNames[id] || `카테고리 #${id}`
 
   return (
     <main className="container pt-4 pb-12">
-  <h1 className="text-2xl font-bold mb-0">{categoryName}</h1>
+      <h1 className="text-2xl font-bold mb-4">{categoryName}</h1>
       {/* @ts-expect-error Async Server Component -> 클라이언트 컴포넌트 */}
-      <ProductsWithSort products={products} />
+      <ProductsWithSort products={products} categoryName={categoryName} />
     </main>
   )
 }

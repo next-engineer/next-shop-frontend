@@ -11,6 +11,16 @@ type Product = {
   price: number | string
   imageUrl?: string
   description?: string
+  categoryId?: string // 카테고리 ID 추가
+}
+
+// 카테고리 이름 맵
+const categoryNames: Record<string, string> = {
+  "1": "모자",
+  "2": "신발",
+  "3": "상의",
+  "4": "하의",
+  "5": "아우터",
 }
 
 export default function ProductDetailClient({ product }: { product: Product }) {
@@ -54,28 +64,40 @@ export default function ProductDetailClient({ product }: { product: Product }) {
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8 flex flex-row gap-8 min-h-[600px] bg-black">
+    <div className="max-w-7xl mx-auto py-1 md:py-6 px-4 md:px-8 flex flex-col md:flex-row justify-center items-start md:items-center gap-2 md:gap-1 bg-black">
       {/* 이미지 */}
-      <div className="relative flex-shrink-0 w-[60%] min-h-[600px] rounded-2xl overflow-hidden bg-black flex items-center justify-center">
+      <div className="relative w-full md:w-[55%] min-h-[300px] md:min-h-[500px] rounded-2xl overflow-hidden bg-black flex items-center justify-center">
         <Image
           src={product.imageUrl || "/placeholder.svg"}
           alt={product.name}
           fill
           className="object-contain"
-          sizes="(max-width: 768px) 100vw, 60vw"
+          sizes="(max-width: 768px) 100vw, 55vw"
           priority
         />
       </div>
 
       {/* 상세 정보 */}
-      <div className="flex flex-col w-[40%] justify-start gap-6 text-white -ml-8">
-        <h1 className="text-3xl font-bold">{product.name}</h1>
-        <div className="text-xl text-gray-300">{Number(product.price).toLocaleString()}원</div>
+      <div className="flex flex-col w-full md:w-[45%] justify-start gap-3 md:gap-4 text-white ml-0 md:ml-[-4px]">
+        {/* 카테고리명 표시 */}
+        {product.categoryId && categoryNames[product.categoryId] && (
+          <h2 className="text-xl md:text-1xl font-semibold text-gray-300 mb-1">
+            {categoryNames[product.categoryId]}
+          </h2>
+        )}
+
+        {/* 상품명 */}
+        <h1 className="text-3xl md:text-3xl font-bold">{product.name}</h1>
+        
+        {/* 가격 */}
+        <div className="text-lg md:text-2xl text-gray-300">
+          {Number(product.price).toLocaleString()}원
+        </div>
 
         {/* 사이즈 선택 */}
         <div>
           <h2 className="font-semibold mb-2 text-white">사이즈 선택</h2>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             {sizes.map((size) => (
               <button
                 key={size}
@@ -97,7 +119,7 @@ export default function ProductDetailClient({ product }: { product: Product }) {
         {/* 색상 선택 */}
         <div>
           <h2 className="font-semibold mb-2 text-white">색상 선택</h2>
-          <div className="flex space-x-3">
+          <div className="flex flex-wrap gap-3">
             {colors.map((color) => (
               <button
                 key={color.name}
@@ -116,17 +138,17 @@ export default function ProductDetailClient({ product }: { product: Product }) {
         </div>
 
         {/* 버튼 및 무료배송 안내 */}
-        <div className="flex flex-col gap-2 mt-4">
-          <div className="flex space-x-4">
+        <div className="flex flex-col gap-2 mt-2 md:mt-4">
+          <div className="flex flex-col md:flex-row gap-2">
             <Button
               onClick={handleAddToCart}
-              className="flex items-center border border-white bg-black text-white hover:bg-gray-800"
+              className="flex-1 border border-white bg-black text-white hover:bg-gray-800"
               size="lg"
             >
               장바구니 담기
             </Button>
             <Button
-              className="border border-white bg-black text-white hover:bg-gray-800"
+              className="flex-1 border border-white bg-black text-white hover:bg-gray-800"
               size="lg"
             >
               구매하기
@@ -135,16 +157,17 @@ export default function ProductDetailClient({ product }: { product: Product }) {
 
           {/* 장바구니 합계 기준 무료배송 안내 */}
           {cartTotal >= 50000 ? (
-            <p className="text-white text-sm mt-2">무료배송 적용!</p>
+            <p className="text-white text-sm mt-1">무료배송 적용!</p>
           ) : (
-            <p className="text-white text-sm mt-2">
+            <p className="text-white text-sm mt-1">
               {50000 - cartTotal}원 추가 구매 시 무료배송
             </p>
           )}
         </div>
 
+        {/* 설명 */}
         {product.description && (
-          <p className="text-gray-400 leading-relaxed mt-4">{product.description}</p>
+          <p className="text-gray-400 leading-relaxed mt-3">{product.description}</p>
         )}
       </div>
     </div>
