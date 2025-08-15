@@ -2,7 +2,7 @@ export async function apiGet<T>(
   path: string,
   params?: Record<string, string | number | boolean | undefined>
 ) {
-  const base = process.env.NEXT_PUBLIC_API_BASE || "";
+  const base = process.env.NEXT_PUBLIC_TEST_API_BASE || "";
   const url = new URL(path, base);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {
