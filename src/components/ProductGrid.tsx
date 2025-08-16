@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Heart, ShoppingCart } from 'lucide-react'
-import { Button } from './ui/button'
+import { Button } from "../../components/ui/button";
 
 const products = [
   {

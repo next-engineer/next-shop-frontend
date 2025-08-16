@@ -66,7 +66,7 @@ export function Header() {
 
             {/* Search Bar */}
             <div className="hidden md:flex items-center flex-1 max-w-md mx-8">
-              <form 
+              <form
                 onSubmit={(e) => {
                   e.preventDefault()
                   const formData = new FormData(e.currentTarget)
@@ -144,7 +144,7 @@ export function Header() {
           {isMenuOpen && (
             <div className="md:hidden py-4 border-t border-gray-800 animate-in slide-in-from-top-2 duration-200">
               <div className="flex flex-col space-y-4">
-                <form 
+                <form
                   onSubmit={(e) => {
                     e.preventDefault()
                     const formData = new FormData(e.currentTarget)

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Search, ShoppingBag, User, Menu, X, ChevronRight } from 'lucide-react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
+import { Button } from "../../components/ui/button";
+import { Input }  from "../../components/ui/input";
 
 export function Header() {
   const navigate = useNavigate()
