@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  variables:
+  S3_BUCKET           : go-shop-server-bucket
+  CF_DIST_ID          : E1KQNX3QO2A3IU
+  NEXT_PUBLIC_API_BASE_URL: http://go-test-alb-308740593.ap-northeast-2.elb.amazonaws.com
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18
+    commands:
+      - echo "[Install] npm ci"
+      - npm ci
+  pre_build:
+    commands:
+      - echo "[PreBuild] .env.production 생성 (NEXT_PUBLIC_* 만 클라이언트에 주입됨)"
+      - |
+        cat > .env.production <<EOF
+        NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+        EOF
+      - cat .env.production
+  build:
+    commands:
+      - echo "[Build] next build & export"
+      - npm run build
+      - npx next export
+  post_build:
+    commands:
+      - echo "[PostBuild] S3 sync (out -> bucket)"
+      - aws s3 sync out s3://$S3_BUCKET/ --delete
+      - echo "[PostBuild] CloudFront invalidation"
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: out
