@@ -22,6 +22,7 @@ const allProducts = [
 
 export default function SearchPage() {
   const searchParams = useSearchParams()
+  // @ts-ignore
   const query = searchParams.get('q') || ''
   const [searchTerm, setSearchTerm] = useState(query)
   const [sortBy, setSortBy] = useState('latest')

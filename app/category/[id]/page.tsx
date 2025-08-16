@@ -5,7 +5,7 @@ type Product = { id: number; name: string; price: number | string; imageUrl?: st
 type Page<T> = { content: T[] }
 
 async function apiGet<T>(path: string, params?: Record<string, string | number>) {
-  const base = process.env.NEXT_PUBLIC_API_BASE || ""
+  const base = process.env.NEXT_PUBLIC_TEST_API_BASE || ""
   const url = new URL(path, base)
   if (params) Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)))
   const res = await fetch(url.toString(), { cache: "no-store" })

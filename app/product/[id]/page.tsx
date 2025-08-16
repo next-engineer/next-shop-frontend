@@ -3,7 +3,7 @@ import Image from "next/image"
 type Product = { id:number; name:string; price:number|string; imageUrl?:string; description?:string }
 
 async function apiGet<T>(path: string) {
-  const base = process.env.NEXT_PUBLIC_API_BASE || ""
+  const base = process.env.NEXT_PUBLIC_TEST_API_BASE || ""
   const res = await fetch(new URL(path, base), { cache: "no-store" })
   if (!res.ok) throw new Error(await res.text())
   return (await res.json()) as T
