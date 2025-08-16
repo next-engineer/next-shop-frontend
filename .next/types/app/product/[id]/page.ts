@@ -1,4 +1,4 @@
-// File: C:\Users\user\next-shop-frontend-main\app\product\[id]\page.tsx
+// File: C:\Users\Administrator\IdeaProjects\next-shop-frontend\app\product\[id]\page.tsx
 import * as entry from '../../../../../app/product/[id]/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

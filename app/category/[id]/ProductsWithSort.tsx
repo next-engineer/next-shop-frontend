@@ -38,7 +38,6 @@ export default function ProductsWithSort({ products, categoryName }: ProductsWit
     setSortedProducts(sorted)
   }, [sortOrder, products])
 
-  // 외부 클릭 시 드롭다운 닫기
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -50,56 +49,56 @@ export default function ProductsWithSort({ products, categoryName }: ProductsWit
   }, [dropdownOpen])
 
   return (
-    <>
-      <div className="mb-4 flex justify-end items-center relative" ref={dropdownRef}>
-        <button
-          onClick={() => setDropdownOpen((prev) => !prev)}
-          className="px-3 py-1 border rounded bg-gray-800 text-white flex items-center space-x-2"
-          aria-haspopup="true"
-          aria-expanded={dropdownOpen}
-        >
-          <span>상품 정렬</span>
-          <svg
-            className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+      <>
+        <div className="mb-4 flex justify-end items-center relative" ref={dropdownRef}>
+          <button
+              onClick={() => setDropdownOpen((prev) => !prev)}
+              className="px-3 py-1 border rounded bg-gray-800 text-white flex items-center space-x-2"
+              aria-haspopup="true"
+              aria-expanded={dropdownOpen}
           >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+            <span>상품 정렬</span>
+            <svg
+                className={`w-4 h-4 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
 
-        {dropdownOpen && (
-          <div className="absolute right-0 mt-2 w-44 bg-gray-800 rounded shadow-lg border border-gray-700 z-10">
-            {["newest", "asc", "desc"].map((order) => (
-              <button
-                key={order}
-                onClick={() => {
-                  setSortOrder(order as SortOrder)
-                  setDropdownOpen(false)
-                }}
-                className={`block w-full text-left px-4 py-2 hover:bg-gray-700 ${
-                  sortOrder === order ? "font-semibold bg-gray-700" : ""
-                } text-white`}
-              >
-                {order === "newest" ? "신상품순" : order === "asc" ? "가격 낮은순" : "가격 높은순"}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
+          {dropdownOpen && (
+              <div className="absolute right-0 mt-2 w-44 bg-gray-800 rounded shadow-lg border border-gray-700 z-10">
+                {["newest", "asc", "desc"].map((order) => (
+                    <button
+                        key={order}
+                        onClick={() => {
+                          setSortOrder(order as SortOrder)
+                          setDropdownOpen(false)
+                        }}
+                        className={`block w-full text-left px-4 py-2 hover:bg-gray-700 ${
+                            sortOrder === order ? "font-semibold bg-gray-700" : ""
+                        } text-white`}
+                    >
+                      {order === "newest" ? "신상품순" : order === "asc" ? "가격 낮은순" : "가격 높은순"}
+                    </button>
+                ))}
+              </div>
+          )}
+        </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-        {sortedProducts.length > 0 ? (
-          sortedProducts.map((product) => (
-            <ProductCard key={product.id} product={product} categoryName={categoryName} />
-          ))
-        ) : (
-          <div>상품이 없습니다.</div>
-        )}
-      </div>
-    </>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {sortedProducts.length > 0 ? (
+              sortedProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} categoryName={categoryName} />
+              ))
+          ) : (
+              <div>상품이 없습니다.</div>
+          )}
+        </div>
+      </>
   )
 }
