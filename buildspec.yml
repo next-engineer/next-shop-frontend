@@ -2,8 +2,8 @@ version: 0.2
 
 env:
   variables:
-  S3_BUCKET           : go-shop-server-bucket
-  CF_DIST_ID          : E1KQNX3QO2A3IU
+  S3_BUCKET: go-shop-server-bucket
+  CF_DIST_ID: E1KQNX3QO2A3IU
   NEXT_PUBLIC_API_BASE_URL: http://go-test-alb-308740593.ap-northeast-2.elb.amazonaws.com
 
 phases:
