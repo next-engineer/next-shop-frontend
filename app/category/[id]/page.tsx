@@ -4,8 +4,7 @@ type Product = { id: number; name: string; price: number | string; imageUrl?: st
 type Page<T> = { content: T[] }
 
 const API_ORIGIN =
-    process.env.NEXT_PUBLIC_TEST_API_BASE ||
-    process.env.NEXT_PUBLIC_API_BASE ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
     "http://localhost:3000"
 
 function buildUrl(path: string, params?: Record<string, string | number>) {
