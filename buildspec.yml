@@ -5,6 +5,7 @@ env:
     S3_BUCKET: go-shop-server-bucket
     CF_DIST_ID: E1KQNX3Q0A23IU
     NEXT_PUBLIC_API_BASE_URL: http://go-test-alb-308740593.ap-northeast-2.elb.amazonaws.com
+    API_BASE_URL: http://go-test-alb-308740593.ap-northeast-2.elb.amazonaws.com
 
 phases:
   install:
@@ -17,7 +18,9 @@ phases:
       - |
         cat > .env.production <<EOF
         NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+        API_BASE_URL=${API_BASE_URL}
         EOF
+      - cat .env.production
   build:
     commands:
       - npm run build
