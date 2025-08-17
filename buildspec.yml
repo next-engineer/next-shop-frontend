@@ -5,7 +5,7 @@ env:
     S3_BUCKET: go-shop-server-bucket
     CF_DIST_ID: E1KQNX3QO2A3IU
     # 운영은 꼭 https 로! (지금은 예시로 http가 들어있음)
-    NEXT_PUBLIC_API_BASE_URL: "go-test-alb-308740593.ap-northeast-2.elb.amazonaws.com"
+    NEXT_PUBLIC_API_BASE_URL: "https://shop.nextcloudlab.com/api"
     STATIC_PRODUCT_IDS: "1,2,3,4,5"
 
 phases:
