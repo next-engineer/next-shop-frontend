@@ -1,19 +1,16 @@
 export const dynamicParams = false;
+
 export async function generateStaticParams() {
   return ['1', '2', '3', '4', '5'].map((id) => ({ id }));
 }
 
-export default async function ProductPage({
-  params,
-}: {
-  params: Promise<{ id: string }> | { id: string };
-}) {
-  const { id } = await Promise.resolve(params);
+export default async function ProductPage(props: any) {
+  const p = await Promise.resolve(props?.params);
+  const id = p?.id as string;
 
-  // ↓ 기존 상세 호출/렌더링 로직
   // const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL}/products/${id}`, { cache: 'no-store' });
   // const product = await res.json();
   // return <ProductView product={product} />;
 
-  return <div />; // ← 기존 JSX로 교체
+  return <div />; // ← 네 JSX로 교체
 }
