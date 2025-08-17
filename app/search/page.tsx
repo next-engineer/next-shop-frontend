@@ -1,3 +1,4 @@
+import { apiFetch } from '@/lib/api';
 import { Suspense } from "react";
 import SearchContent from "./search-content";
 

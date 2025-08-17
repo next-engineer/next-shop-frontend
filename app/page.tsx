@@ -1,3 +1,5 @@
+import { apiFetch } from '@/lib/api';
+import { apiFetch } from '@/lib/api';
 import { HeroSection } from "@/components/hero-section"
 import ProductGrid from "@/components/product-grid"
 import { RecentlyViewed } from "@/components/recently-viewed"

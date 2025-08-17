@@ -9,8 +9,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'image.msscdn.net',
-        pathname: '/**',
+        hostname: 'image.msscdn.net'
       },
       // (필요 시 여기 추가)
       // { protocol: 'https', hostname: 'img.example.com', pathname: '/**' },

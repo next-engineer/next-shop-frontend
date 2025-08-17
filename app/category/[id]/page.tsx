@@ -1,3 +1,5 @@
+import { apiFetch } from '@/lib/api';
+type CategoryPageParams = { params: { id: string } };
 export const dynamicParams = false;
 
 // SSG로 미리 만들 경로들
@@ -6,7 +8,7 @@ export async function generateStaticParams() {
 }
 
 // ❗️여기서는 타입 붙이지 말고 any로 받자(Next 15의 PageProps 강제와 충돌 방지)
-export default async function CategoryPage(props: any) {
+export default async function Page({ params }: { params: { id: string } }) {
   const p = await Promise.resolve(props?.params);
   const id = p?.id as string;
 

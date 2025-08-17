@@ -1,3 +1,5 @@
+import { apiFetch } from '@/lib/api';
+
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
