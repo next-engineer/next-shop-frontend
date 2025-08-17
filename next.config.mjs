@@ -9,14 +9,7 @@ const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
 
-  async rewrites() {
-    if (process.env.NODE_ENV === 'development') {
-      return [
-        { source: '/api/:path*', destination: 'http://localhost:8080/api/:path*' },
-      ]
-    }
-    return [] // ✅ 운영은 브라우저가 ALB로 직접 호출 (rewrites 불필요)
-  },
-}
 
-export default nextConfig
+};
+
+export default nextConfig;

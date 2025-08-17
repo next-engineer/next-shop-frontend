@@ -1,44 +1,15 @@
-import ProductsWithSort from "./ProductsWithSort"
+import CategoryClient from "./category-client";
 
-type Product = { id: number; name: string; price: number | string; imageUrl?: string; createdAt?: string }
-type Page<T> = { content: T[] }
+export const dynamic = "error"; // 정적 export 강제
+export const revalidate = 0;    // 페이지 자체는 정적(데이터는 클라이언트에서 가져옴)
 
-const API_ORIGIN =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    "http://localhost:3000"
-
-function buildUrl(path: string, params?: Record<string, string | number>) {
-  const url = new URL(path, API_ORIGIN)
-  if (params) url.search = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString()
-  return url.toString()
+export async function generateStaticParams() {
+  // ✅ 빌드 타임에 생성할 카테고리 목록을 반환
+  const ids = [1, 2, 3, 4, 5]; // ← 실제 운영 범위로 수정
+  return ids.map((id) => ({ id: String(id) }));
 }
 
-async function apiGet<T>(path: string, params?: Record<string, string | number>) {
-  const res = await fetch(buildUrl(path, params), { cache: "no-store" })
-  if (!res.ok) throw new Error(await res.text())
-  return (await res.json()) as T
-}
-
-async function fetchProductsByCategoryId(id: string) {
-  const page = await apiGet<Page<Product>>("/api/products", { categoryId: id, page: 0, size: 30 })
-  return page.content
-}
-
-const categoryNames: Record<string, string> = { "1": "모자", "2": "신발", "3": "상의", "4": "하의", "5": "아우터" }
-
-export default async function CategoryPage({
-                                             params,
-                                           }: {
-
-  params: Promise<{ id: string }>
-}) {
-  const { id } = await params
-  const products = await fetchProductsByCategoryId(id)
-  const categoryName = categoryNames[id] || `카테고리 #${id}`
-  return (
-      <main className="container pt-4 pb-12">
-        <h1 className="text-2xl font-bold mb-4">{categoryName}</h1>
-        <ProductsWithSort products={products} categoryName={categoryName} />
-      </main>
-  )
+export default function CategoryPage({ params }: { params: { id: string } }) {
+  // 서버에서는 데이터 호출 안 함(정적 export 안전)
+  return <CategoryClient id={params.id} />;
 }
