@@ -1,6 +1,12 @@
 import ProductDetailClient from "./ProductDetailClient"
 
-type Product = { id: number; name: string; price: number | string; imageUrl?: string; description?: string }
+type Product = {
+  id: number
+  name: string
+  price: number | string
+  imageUrl?: string
+  description?: string
+}
 
 const API_ORIGIN =
     process.env.NEXT_PUBLIC_TEST_API_BASE ||
@@ -17,8 +23,14 @@ async function apiGet<T>(path: string) {
   return (await res.json()) as T
 }
 
-export default async function ProductDetail({ params }: { params: { id: string } }) {
-  const { id } = params
+export default async function ProductDetail({
+                                              params,
+                                            }: {
+
+  params: Promise<{ id: string }>
+}) {
+
+  const { id } = await params
   const product = await apiGet<Product>(`/api/products/${id}`)
   return <ProductDetailClient product={product} />
 }

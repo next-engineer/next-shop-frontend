@@ -10,7 +10,7 @@ const API_ORIGIN =
 
 function buildUrl(path: string, params?: Record<string, string | number>) {
   const url = new URL(path, API_ORIGIN)
-  if (params) url.search = new URLSearchParams(Object.entries(params).map(([k,v])=>[k,String(v)])).toString()
+  if (params) url.search = new URLSearchParams(Object.entries(params).map(([k, v]) => [k, String(v)])).toString()
   return url.toString()
 }
 
@@ -27,8 +27,13 @@ async function fetchProductsByCategoryId(id: string) {
 
 const categoryNames: Record<string, string> = { "1": "모자", "2": "신발", "3": "상의", "4": "하의", "5": "아우터" }
 
-export default async function CategoryPage({ params }: { params: { id: string } }) {
-  const { id } = params
+export default async function CategoryPage({
+                                             params,
+                                           }: {
+
+  params: Promise<{ id: string }>
+}) {
+  const { id } = await params
   const products = await fetchProductsByCategoryId(id)
   const categoryName = categoryNames[id] || `카테고리 #${id}`
   return (
