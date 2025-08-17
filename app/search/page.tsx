@@ -24,12 +24,15 @@ type Product = {
 const categoryNameToId: Record<string, number> = { 모자:1, 신발:2, 상의:3, 하의:4, 아우터:5 }
 
 async function apiGet<T>(path: string, params?: Record<string, string | number>) {
-  const qs = params ? "?" + new URLSearchParams(Object.entries(params).map(([k,v]) => [k, String(v)])) : ""
-  const res = await fetch(`${path}${qs}`, { cache: "no-store" })
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? ""  // ← ALB 도메인 (https 권장)
+  const url = new URL(path, base)                          // 절대경로로 변환
+  if (params) {
+    Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, String(v)))
+  }
+  const res = await fetch(url.toString(), { cache: "no-store" })
   if (!res.ok) throw new Error(await res.text())
   return (await res.json()) as T
 }
-
 function normalizeProducts(data: any): Product[] {
   const list: any[] = Array.isArray(data?.content) ? data.content : Array.isArray(data) ? data : []
   return list.map((p) => ({

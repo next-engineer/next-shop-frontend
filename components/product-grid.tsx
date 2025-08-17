@@ -1,114 +1,79 @@
-import Image from "next/image"
-import Link from "next/link"
+"use client";
 
-type Product = {
-  id: number | string
-  name: string
-  price: number | string
-  imageUrl?: string
-  categoryId?: string | number
-}
-type Page<T> = { content: T[] }
+import { useEffect, useState } from "react";
 
-// 백엔드 베이스 URL 결정
-const API_ORIGIN =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "http://localhost:3000")
+type Product = { id: number; name: string; price: number | string; imageUrl?: string };
 
-function buildUrl(path: string, params?: Record<string, string | number>) {
-  const url = new URL(path, API_ORIGIN) // "/api/..." 기준으로 절대 URL 생성
-  if (params) {
-    url.search = new URLSearchParams(
-        Object.entries(params).map(([k, v]) => [k, String(v)])
-    ).toString()
-  }
-  return url.toString()
-}
+const CATEGORY_IDS = [1, 2, 3, 4, 5]; // 필요에 맞게 조정
 
-async function safeApiGet<T>(path: string, params?: Record<string, string | number>, fallback: T | null = null) {
-  try {
-    const res = await fetch(buildUrl(path, params), { cache: "no-store" })
-    if (!res.ok) {
-      // 백엔드 에러 본문을 그대로 표출하면 개발에 도움됨
-      const text = await res.text()
-      throw new Error(text || `HTTP ${res.status}`)
-    }
-    return (await res.json()) as T
-  } catch (e) {
-    console.error("[product-grid] fetch fail:", e)
-    if (fallback !== null) return fallback
-    throw e
-  }
-}
+export default function ProductGrid() {
+  const [itemsByCat, setItemsByCat] = useState<Record<number, Product[]>>({});
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
 
-export default async function ProductGrid() {
-  const categoryIds = [1, 2, 3, 4, 5] // 숫자로 고정(문자형 파라미터 이슈 방지)
-  const allCategoryProducts: Product[][] = []
-
-  // 각 카테고리별 최신 3개
-  for (const id of categoryIds) {
-    // ⚠️ 일부 백엔드는 sort 파라미터에서 에러나는 경우가 있어 제거
-    const page = await safeApiGet<Page<Product>>(
-        "/api/products",
-        { categoryId: id, page: 0, size: 3 },
-        { content: [] } // 실패 시 빈 목록으로 대체하여 홈이 안 터지게
-    )
-    // id 혼용 대비 정렬(백엔드가 이미 정렬해주면 영향 없음)
-    const top3 = [...page.content]
-        .sort((a: any, b: any) => Number(b?.id ?? 0) - Number(a?.id ?? 0))
-        .slice(0, 3)
-    allCategoryProducts.push(top3)
-  }
-
-  // 라운드로빈으로 섞기 → 최대 12개
-  const shuffled: Product[] = []
-  let added = true
-  while (added) {
-    added = false
-    for (const arr of allCategoryProducts) {
-      if (arr.length > 0) {
-        shuffled.push(arr.shift()!)
-        added = true
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setErr(null);
+      try {
+        const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
+        const results = await Promise.all(
+          CATEGORY_IDS.map(async (cid) => {
+            const url = new URL("/api/products", base);
+            url.searchParams.set("categoryId", String(cid));
+            url.searchParams.set("page", "0");
+            url.searchParams.set("size", "3");
+            const r = await fetch(url.toString(), { cache: "no-store" });
+            if (!r.ok) throw new Error(`/${cid}: ${r.status}`);
+            const page = await r.json(); // { content: Product[] } 형태라면 page.content 사용
+            const list = Array.isArray(page?.content) ? page.content : (Array.isArray(page) ? page : []);
+            return [cid, list as Product[]] as const;
+          })
+        );
+        if (!cancelled) {
+          const next: Record<number, Product[]> = {};
+          results.forEach(([cid, list]) => (next[cid] = list));
+          setItemsByCat(next);
+        }
+      } catch (e: any) {
+        if (!cancelled) setErr(e?.message ?? "fetch 실패");
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     }
-  }
-  const result = shuffled.slice(0, 12)
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  if (loading) return <div className="py-8">상품 로딩 중…</div>;
+  if (err) return <div className="py-8 text-red-500">에러: {err}</div>;
 
   return (
-      <section className="py-12">
-        <div className="container">
-          <h2 className="text-2xl font-bold mb-6">추천 상품</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {result.map((p) => (
-                <div
-                    key={String(p.id)}
-                    className="group relative bg-gray-900 rounded-lg overflow-hidden hover:bg-gray-800 transition-all duration-300 flex flex-col"
-                >
-                  <div className="relative w-full aspect-square overflow-hidden">
-                    <Link href={`/product/${p.id}`} className="block w-full h-full">
-                      <Image
-                          src={(p as any).imageUrl || "/placeholder.svg"}
-                          alt={p.name}
-                          fill
-                          className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </Link>
-                  </div>
-                  <div className="p-3 flex flex-col flex-1 justify-between">
-                    <div>
-                      <div className="font-semibold text-white">{p.name}</div>
-                      <div className="text-gray-300">{Number(p.price).toLocaleString()}원</div>
-                    </div>
-                    <div className="mt-3 text-left">
-                      <Link href={`/product/${p.id}`} className="text-blue-400 hover:underline">
-                        상세보기
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-            ))}
-          </div>
-        </div>
-      </section>
-  )
+    <div className="space-y-10">
+      {CATEGORY_IDS.map((cid) => {
+        const items = itemsByCat[cid] ?? [];
+        return (
+          <section key={cid}>
+            <h2 className="text-xl font-semibold mb-4">카테고리 {cid}</h2>
+            {items.length === 0 ? (
+              <div className="text-gray-400">상품이 없습니다.</div>
+            ) : (
+              <ul className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {items.map((p) => (
+                  <li key={p.id} className="rounded-md border border-gray-700 p-3">
+                    <div className="mb-2 text-sm opacity-80">#{p.id}</div>
+                    <div className="font-semibold">{p.name}</div>
+                    <div className="opacity-80">{String(p.price)}</div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        );
+      })}
+    </div>
+  );
 }

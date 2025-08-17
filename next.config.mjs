@@ -1,21 +1,17 @@
 /** @type {import('next').NextConfig} */
-const API_BASE = process.env.NEXT_PUBLIC_TEST_API_BASE || '';
 
+// 개발용 프록시만 유지 (로컬 개발 편의)
 const nextConfig = {
   eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: true },
   images: { unoptimized: true },
 
   async rewrites() {
-    // 개발: 백엔드 로컬 8080
     if (process.env.NODE_ENV === 'development') {
-      return [{ source: '/api/:path*', destination: 'http://localhost:8080/api/:path*' }];
+      return [{ source: '/api/:path*', destination: 'http://localhost:8080/api/:path*' }]
     }
-    // 운영: 환경변수에 넣어둔 백엔드 도메인으로 프록시
-    if (API_BASE) {
-      return [{ source: '/api/:path*', destination: `${API_BASE}/api/:path*` }];
-    }
-    return [];
+    // 프로덕션은 브라우저에서 ALB 도메인을 직접 호출 (rewrites 불필요)
+    return []
   },
 }
 
