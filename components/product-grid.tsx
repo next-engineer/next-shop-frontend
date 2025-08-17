@@ -11,10 +11,8 @@ type Product = {
 type Page<T> = { content: T[] }
 
 // 백엔드 베이스 URL 결정
-// .env에 NEXT_PUBLIC_TEST_API_BASE가 있으면 그걸 사용 (권장: http://localhost:8080)
-// 없으면 개발에선 8080, 그 외엔 3000(리라이트 경유)
 const API_ORIGIN =
-    process.env.NEXT_PUBLIC_TEST_API_BASE ||
+    process.env.NEXT_PUBLIC_API_BASE_URL ||
     (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "http://localhost:3000")
 
 function buildUrl(path: string, params?: Record<string, string | number>) {
