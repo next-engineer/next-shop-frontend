@@ -15,7 +15,7 @@ export function generateStaticParams() {
     .map((s) => s.trim())
     .filter(Boolean);
 
-  return ids.map((id) => ({ id }));
+  return ['1', '2', '3', '4', '5'].map((id) => ({ id }));
 }
 
 export default function ProductPage({ params }: { params: { id: string } }) {
