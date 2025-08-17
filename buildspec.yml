@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  variables:
+    S3_BUCKET: go-shop-server-bucket
+    CF_DIST_ID: E1KQNX3Q0A23IU
+    NEXT_PUBLIC_API_BASE_URL: http://go-test-alb-308740593.ap-northeast-2.elb.amazonaws.com
+    API_BASE_URL: http://go-test-alb-308740593.ap-northeast-2.elb.amazonaws.com
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - npm ci
+  pre_build:
+    commands:
+      - |
+        cat > .env.production <<EOF
+        NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+        API_BASE_URL=${API_BASE_URL}
+        EOF
+      - cat .env.production
+  build:
+    commands:
+      - npm run build
+      - npx next export
+  post_build:
+    commands:
+      - aws s3 sync out s3://$S3_BUCKET/ --delete
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"
+artifacts:
+  files:
+    - '**/*'
+  base-directory: out
