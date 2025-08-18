@@ -1,7 +1,6 @@
 // app/category/[id]/page.tsx
 import CategoryClient from "./category-client";
 
-export const dynamicParams = true;
 
 // SSG용 기본 경로(필요 없으면 범위를 줄이거나 삭제해도 됨)
 export async function generateStaticParams() {
