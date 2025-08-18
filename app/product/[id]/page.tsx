@@ -1,5 +1,5 @@
 // app/product/[id]/page.tsx
-import ProductClient from "./product-client";
+import {redirect} from "./product-client";
 
 
 export async function generateStaticParams() {
