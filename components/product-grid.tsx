@@ -1,79 +1,99 @@
-"use client";
+// components/product-grid.tsx
+"use client"
 
-import { useEffect, useState } from "react";
+import Image from "next/image"
+import Link from "next/link"
+import { useEffect, useState } from "react"
 
-type Product = { id: number; name: string; price: number | string; imageUrl?: string };
+// 배포 환경에서는 NEXT_PUBLIC_API_BASE_URL을 최우선 사용.
+// 없으면 동일 도메인의 /api 로 폴백.
+const API_BASE =
+  process.env.NEXT_PUBLIC_API_BASE_URL ||
+  (typeof window !== "undefined" ? `${window.location.origin}/api` : "")
 
-const CATEGORY_IDS = [1, 2, 3, 4, 5]; // 필요에 맞게 조정
+type Product = {
+  id: number
+  name: string
+  price: number
+  imageUrl: string
+  categoryId: number
+}
 
 export default function ProductGrid() {
-  const [itemsByCat, setItemsByCat] = useState<Record<number, Product[]>>({});
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
+  const [data, setData] = useState<Record<number, Product[]>>({})
+  const categoryIds = [1, 2, 3, 4, 5]
 
   useEffect(() => {
-    let cancelled = false;
-    async function load() {
-      setLoading(true);
-      setErr(null);
+    let cancelled = false
+    ;(async () => {
       try {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-        const results = await Promise.all(
-          CATEGORY_IDS.map(async (cid) => {
-            const url = new URL("/api/products", base);
-            url.searchParams.set("categoryId", String(cid));
-            url.searchParams.set("page", "0");
-            url.searchParams.set("size", "3");
-            const r = await fetch(url.toString(), { cache: "no-store" });
-            if (!r.ok) throw new Error(`/${cid}: ${r.status}`);
-            const page = await r.json(); // { content: Product[] } 형태라면 page.content 사용
-            const list = Array.isArray(page?.content) ? page.content : (Array.isArray(page) ? page : []);
-            return [cid, list as Product[]] as const;
+        const entries = await Promise.all(
+          categoryIds.map(async (cid) => {
+            const res = await fetch(
+              `${API_BASE}/products?categoryId=${cid}&page=0&size=8`,
+              { cache: "no-store" }
+            )
+            const json = await res.json()
+            return [cid, (json.content ?? []) as Product[]] as const
           })
-        );
+        )
         if (!cancelled) {
-          const next: Record<number, Product[]> = {};
-          results.forEach(([cid, list]) => (next[cid] = list));
-          setItemsByCat(next);
+          setData(Object.fromEntries(entries))
         }
-      } catch (e: any) {
-        if (!cancelled) setErr(e?.message ?? "fetch 실패");
-      } finally {
-        if (!cancelled) setLoading(false);
+      } catch (e) {
+        console.error("Failed to load products:", e)
       }
-    }
-    load();
+    })()
     return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (loading) return <div className="py-8">상품 로딩 중…</div>;
-  if (err) return <div className="py-8 text-red-500">에러: {err}</div>;
+      cancelled = true
+    }
+  }, [])
 
   return (
-    <div className="space-y-10">
-      {CATEGORY_IDS.map((cid) => {
-        const items = itemsByCat[cid] ?? [];
-        return (
-          <section key={cid}>
-            <h2 className="text-xl font-semibold mb-4">카테고리 {cid}</h2>
-            {items.length === 0 ? (
-              <div className="text-gray-400">상품이 없습니다.</div>
-            ) : (
-              <ul className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {items.map((p) => (
-                  <li key={p.id} className="rounded-md border border-gray-700 p-3">
-                    <div className="mb-2 text-sm opacity-80">#{p.id}</div>
-                    <div className="font-semibold">{p.name}</div>
-                    <div className="opacity-80">{String(p.price)}</div>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        );
-      })}
-    </div>
-  );
+    <section className="mx-auto max-w-7xl px-4 pb-16">
+      <h2 className="sr-only">추천 상품 섹션</h2>
+
+      {categoryIds.map((cid) => (
+        <div key={cid} className="mb-12">
+          <h3 className="mb-4 text-lg font-semibold">카테고리 {cid}</h3>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {(data[cid] ?? []).map((p) => (
+              <article
+                key={p.id}
+                className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+              >
+                <Link href={`/product/${p.id}`} className="block">
+                  <div className="relative aspect-[4/3] w-full">
+                    {p.imageUrl ? (
+                      <Image
+                        src={p.imageUrl}
+                        alt={p.name}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        sizes="(max-width: 1024px) 100vw, 25vw"
+                        priority={false}
+                        unoptimized={true}
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-sm text-white/60">
+                        이미지 없음
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-1 p-4">
+                    <h4 className="line-clamp-2 text-sm font-medium">{p.name}</h4>
+                    <p className="text-sm text-white/70">{p.price.toLocaleString()}원</p>
+                    <span className="inline-flex items-center gap-1 text-xs text-blue-400 underline">
+                      상세보기
+                    </span>
+                  </div>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      ))}
+    </section>
+  )
 }
