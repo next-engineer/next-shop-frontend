@@ -14,7 +14,6 @@ type Product = {
 type Page<T> = { content?: T[]; items?: T[] }
 
 async function fetchProductsByCategoryId(categoryId: string) {
-  // 👉 실제 API 경로 맞추세요
   const url = `${API_BASE}/products/category/${categoryId}?page=0&size=30`
   const res = await fetch(url, { cache: "no-store" })
   if (!res.ok) throw new Error(await res.text())
