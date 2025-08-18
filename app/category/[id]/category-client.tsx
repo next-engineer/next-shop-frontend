@@ -61,7 +61,7 @@ export default function CategoryClient({ categoryId }: { categoryId: number }) {
             {Number(p.price).toLocaleString()}원
           </div>
           <Link
-            href={`/product/${p.id}`}
+            href={`/product-detail?id=${p.id}`}
             className="mt-3 inline-block px-3 py-2 rounded-md bg-black text-white"
           >
             상세보기

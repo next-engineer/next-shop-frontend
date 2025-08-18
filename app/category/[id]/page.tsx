@@ -1,67 +1,51 @@
 // app/category/[id]/page.tsx
-import type { PageProps } from "next"
 import Image from "next/image"
 import Link from "next/link"
 
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  process.env.NEXT_PUBLIC_API_BASE ||
-  ""
-
-export const dynamicParams = false // static export와 함께 사용
+export const dynamicParams = false; // 정적 export 필수(동적 매개변수 허용 X)
 
 export function generateStaticParams() {
-  // 배포에 포함할 카테고리 경로(예시)
-  return [{ id: "1" }, { id: "2" }, { id: "3" }, { id: "4" }, { id: "5" }]
+  // 카테고리 id가 1~5 라고 가정
+  return ["1","2","3","4","5"].map((id) => ({ id }));
 }
 
-type Product = {
-  id: number
-  name: string
-  price: number
-  imageUrl: string
-  categoryId: number
+type Props = { params: { id: string } };
+
+async function getCategoryProducts(id: string) {
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL!;
+  // 30개 요청 (이전엔 12개만 보였던 원인)
+  const res = await fetch(`${base}/products?categoryId=${id}&page=0&size=30`, {
+    // 정적 export에서도 API 호출을 빌드타임에 고정하고 싶으면 revalidate 제거
+    // 혹은 next: { revalidate: 60 } 등으로 주기적 재생성
+    cache: "force-cache",
+  });
+  if (!res.ok) throw new Error("failed to fetch");
+  return res.json();
 }
 
-export default async function CategoryPage(
-  { params }: PageProps<{ id: string }>
-) {
-  const { id } = await params // ✅ Next 15 방식
-
-  const res = await fetch(
-    `${API_BASE}/products?categoryId=${id}&page=0&size=30`, // ✅ 30개
-    { cache: "no-store" }
-  )
-  const { content = [] } = await res.json() as { content: Product[] }
+export default async function Page({ params }: Props) {
+  const { id } = params;
+  const data = await getCategoryProducts(id);
+  const items = data?.content ?? [];
 
   return (
-    <section className="mx-auto max-w-7xl px-4 pb-16">
-      <h1 className="mb-6 text-2xl font-bold">카테고리 {id}</h1>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {content.map((p) => (
-          <article key={p.id} className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5">
-            <Link href={`/product/${p.id}`} className="block">
-              <div className="relative aspect-[4/3] w-full">
-                <Image
-                  src={p.imageUrl}
-                  alt={p.name}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 25vw"
-                  unoptimized
-                />
-              </div>
-              <div className="space-y-1 p-4">
-                <h4 className="line-clamp-2 text-sm font-medium">{p.name}</h4>
-                <p className="text-sm text-white/70">{p.price.toLocaleString()}원</p>
-                <span className="inline-flex items-center gap-1 text-xs text-blue-400 underline">
-                  상세보기
-                </span>
-              </div>
-            </Link>
-          </article>
+    <main className="container">
+      <h1>카테고리 {id}</h1>
+      <div className="grid">
+        {items.map((p: any) => (
+          <Link
+            key={p.id}
+            href={`/product-detail?id=${p.id}`} // 상세는 query 방식(아래 3번 참고)
+            className="card"
+          >
+            <Image src={p.imageUrl} alt={p.name} width={600} height={600} />
+            <div className="info">
+              <div>{p.name}</div>
+              <div>{p.price}</div>
+            </div>
+          </Link>
         ))}
       </div>
-    </section>
-  )
+    </main>
+  );
 }

@@ -62,7 +62,7 @@ export default function ProductGrid() {
                 key={p.id}
                 className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5"
               >
-                <Link href={`/product/${p.id}`} className="block">
+                href={`/product-detail?id=${p.id}`} className="block">
                   <div className="relative aspect-[4/3] w-full">
                     {p.imageUrl ? (
                       <Image

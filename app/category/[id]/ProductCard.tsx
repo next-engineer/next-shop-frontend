@@ -44,7 +44,7 @@ export function ProductCard({ product, categoryName }: { product: Product; categ
 
           <div className="mt-4 text-left">
             <Link
-                href={`/product/${product.id}`}
+                href={`/product-detail?id=${p.id}`}
                 className="inline-block px-4 py-2 rounded-full bg-gray-700 hover:bg-gray-600 text-sm sm:text-base text-white font-medium transition-colors duration-200"
             >
               상세보기
