@@ -1,56 +1,78 @@
+// app/category/[id]/category-client.tsx
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
-type Product = { id: number; name: string; price: number | string; imageUrl?: string };
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL;
 
-export default function CategoryClient({ id }: { id: string }) {
+type Product = {
+  id: number;
+  name: string;
+  price: number | string;
+  imageUrl?: string;
+};
+
+export default function CategoryClient({ categoryId }: { categoryId: number }) {
   const [items, setItems] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
-    async function run() {
+    let aborted = false;
+    (async () => {
       setLoading(true);
-      setErr(null);
       try {
-        const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
-        const url = new URL("/api/products", base);
-        url.searchParams.set("categoryId", id);
-        url.searchParams.set("page", "0");
-        url.searchParams.set("size", "12");
-        const res = await fetch(url.toString(), { cache: "no-store" });
-        if (!res.ok) throw new Error(await res.text());
+        const url = `${API_BASE}/products?categoryId=${categoryId}&page=0&size=12`;
+        const res = await fetch(url, { cache: "no-store" });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
-        const list = Array.isArray(data?.content) ? data.content : (Array.isArray(data) ? data : []);
-        if (!cancelled) setItems(list);
-      } catch (e: any) {
-        if (!cancelled) setErr(e?.message ?? "불러오기 실패");
+        const list = Array.isArray(data) ? data : (data.content ?? []);
+        if (!aborted) setItems(list);
+      } catch (e) {
+        console.error("[category] fetch fail", e);
+        if (!aborted) setItems([]);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!aborted) setLoading(false);
       }
-    }
-    run();
-    return () => { cancelled = true; };
-  }, [id]);
+    })();
+    return () => {
+      aborted = true;
+    };
+  }, [categoryId]);
 
-  if (loading) return <div className="p-6">상품 로딩 중…</div>;
-  if (err) return <div className="p-6 text-red-500">에러: {err}</div>;
-  if (items.length === 0) return <div className="p-6">해당 카테고리의 상품이 없습니다.</div>;
+  if (loading) return <div className="p-8">로딩 중…</div>;
 
   return (
-    <main className="container py-6">
-      <h1 className="text-2xl font-bold mb-4">카테고리 {id}</h1>
-      <ul className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {items.map((p) => (
-          <li key={p.id} className="rounded-md border border-gray-700 p-3">
-            <div className="mb-2 text-sm opacity-80">#{p.id}</div>
-            <div className="font-semibold">{p.name}</div>
-            <div className="opacity-80">{String(p.price)}</div>
-          </li>
-        ))}
-      </ul>
-    </main>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4">
+      {items.map((p) => (
+        <div key={p.id} className="rounded-xl border p-3">
+          {p.imageUrl ? (
+            // static export + 외부도메인 대응: <img> 사용
+            <img
+              src={p.imageUrl}
+              alt={p.name}
+              className="w-full aspect-square object-cover rounded-lg"
+            />
+          ) : (
+            <div className="w-full aspect-square bg-gray-200 rounded-lg" />
+          )}
+          <div className="mt-3 font-medium">{p.name}</div>
+          <div className="text-sm text-gray-500">
+            {Number(p.price).toLocaleString()}원
+          </div>
+          <Link
+            href={`/product/${p.id}`}
+            className="mt-3 inline-block px-3 py-2 rounded-md bg-black text-white"
+          >
+            상세보기
+          </Link>
+        </div>
+      ))}
+      {items.length === 0 && (
+        <div className="col-span-full text-center text-gray-500">
+          상품이 없습니다.
+        </div>
+      )}
+    </div>
   );
 }
