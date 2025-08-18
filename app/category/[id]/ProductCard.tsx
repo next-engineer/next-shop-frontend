@@ -19,7 +19,7 @@ export function ProductCard({ product, categoryName }: { product: Product; categ
       transition-all duration-300 shadow-lg hover:shadow-2xl
     ">
         <div className="relative w-full aspect-square overflow-hidden rounded-t-2xl">
-          <Link href={`/product/${product.id}`} className="block w-full h-full">
+          <Link href={`/product-detail?id=${product.id}`} className="block w-full h-full">
             <Image
                 src={product.imageUrl || "/placeholder.svg"}
                 alt={product.name}
