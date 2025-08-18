@@ -14,7 +14,7 @@ type Product = {
 type Page<T> = { content?: T[]; items?: T[] }
 
 async function fetchProductsByCategoryId(categoryId: string) {
-  // 👉 실제 API 경로 맞추세요 (필요하면 한 줄만 변경)
+  // 👉 실제 API 경로 맞추세요
   const url = `${API_BASE}/products/category/${categoryId}?page=0&size=30`
   const res = await fetch(url, { cache: "no-store" })
   if (!res.ok) throw new Error(await res.text())
@@ -29,7 +29,6 @@ async function fetchProductsByCategoryId(categoryId: string) {
 
 export const dynamicParams = false
 export async function generateStaticParams() {
-  // 필요 카테고리 id 목록
   return ["1", "2", "3", "4", "5"].map((id) => ({ id }))
 }
 
@@ -37,7 +36,6 @@ const categoryNames: Record<string, string> = {
   "1": "모자", "2": "상의", "3": "하의", "4": "아우터", "5": "신발",
 }
 
-// ✅ 여기! PageProps 같은 거 절대 쓰지 말고 inline 타입으로 받는다.
 export default async function CategoryPage({
   params,
 }: {
