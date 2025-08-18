@@ -12,7 +12,7 @@ type Page<T> = { content: T[] }
 
 // 백엔드 베이스 URL 결정
 const API_ORIGIN =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_PURCHASE_API_BASE_URL ||
     (process.env.NODE_ENV === "development" ? "http://localhost:8080" : "http://localhost:3000")
 
 function buildUrl(path: string, params?: Record<string, string | number>) {

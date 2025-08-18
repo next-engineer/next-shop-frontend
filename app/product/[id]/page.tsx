@@ -9,7 +9,7 @@ type Product = {
 }
 
 const API_ORIGIN =
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
+    process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_PURCHASE_API_BASE_URL ||
     "http://localhost:3000"
 
 function buildUrl(path: string) {
