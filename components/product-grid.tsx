@@ -1,99 +1,133 @@
-// components/product-grid.tsx
-"use client"
+"use client";
 
-import Image from "next/image"
-import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 
-// 배포 환경에서는 NEXT_PUBLIC_API_BASE_URL을 최우선 사용.
-// 없으면 동일 도메인의 /api 로 폴백.
-const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL ||
-  (typeof window !== "undefined" ? `${window.location.origin}/api` : "")
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
+// 필요한 만큼 노출할 카테고리 ID들
+const CATEGORY_IDS = [1, 2, 3, 4, 5];
+
+// API 응답 타입(필드명은 백엔드 응답에 맞춰 사용)
 type Product = {
-  id: number
-  name: string
-  price: number
-  imageUrl: string
-  categoryId: number
-}
+  id: number;
+  name: string;
+  price: number | string;
+  imageUrl: string;
+  categoryId: number;
+};
+
+type PageResponse<T> = {
+  content: T[];
+  totalElements: number;
+  number: number;
+  size: number;
+};
 
 export default function ProductGrid() {
-  const [data, setData] = useState<Record<number, Product[]>>({})
-  const categoryIds = [1, 2, 3, 4, 5]
+  const [itemsByCat, setItemsByCat] = useState<Record<number, Product[]>>({});
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    let cancelled = false
-    ;(async () => {
+    let mounted = true;
+
+    const fetchAll = async () => {
       try {
-        const entries = await Promise.all(
-          categoryIds.map(async (cid) => {
-            const res = await fetch(
-              `${API_BASE}/products?categoryId=${cid}&page=0&size=8`,
-              { cache: "no-store" }
-            )
-            const json = await res.json()
-            return [cid, (json.content ?? []) as Product[]] as const
-          })
-        )
-        if (!cancelled) {
-          setData(Object.fromEntries(entries))
-        }
+        // 홈은 가볍게 각 카테고리 당 12개 정도만
+        const pageSize = 12;
+
+        const promises = CATEGORY_IDS.map(async (cid) => {
+          const url = `${API_BASE}/products?categoryId=${cid}&page=0&size=${pageSize}`;
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error(`Fetch failed: ${url}`);
+          const json = (await res.json()) as PageResponse<Product>;
+          return { cid, list: json.content ?? [] };
+        });
+
+        const results = await Promise.all(promises);
+
+        if (!mounted) return;
+        const next: Record<number, Product[]> = {};
+        results.forEach(({ cid, list }) => (next[cid] = list));
+        setItemsByCat(next);
       } catch (e) {
-        console.error("Failed to load products:", e)
+        console.error(e);
+      } finally {
+        if (mounted) setLoading(false);
       }
-    })()
+    };
+
+    fetchAll();
     return () => {
-      cancelled = true
-    }
-  }, [])
+      mounted = false;
+    };
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="mx-auto max-w-7xl px-4 py-16">
+        <p className="text-sm text-gray-400">불러오는 중…</p>
+      </section>
+    );
+  }
 
   return (
     <section className="mx-auto max-w-7xl px-4 pb-16">
       <h2 className="sr-only">추천 상품 섹션</h2>
 
-      {categoryIds.map((cid) => (
-        <div key={cid} className="mb-12">
-          <h3 className="mb-4 text-lg font-semibold">카테고리 {cid}</h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            {(data[cid] ?? []).map((p) => (
-              <article
-                key={p.id}
-                className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5"
+      {CATEGORY_IDS.map((cid) => {
+        const list = itemsByCat[cid] ?? [];
+        if (!list.length) return null;
+
+        return (
+          <div key={cid} className="mb-12">
+            <div className="mb-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">카테고리 {cid}</h3>
+              <Link
+                href={`/category/${cid}`}
+                className="text-sm text-gray-300 hover:underline"
               >
-                href={`/product-detail?id=${p.id}`} className="block">
-                  <div className="relative aspect-[4/3] w-full">
-                    {p.imageUrl ? (
+                더 보기
+              </Link>
+            </div>
+
+            <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              {list.map((p) => (
+                <li
+                  key={p.id}
+                  className="overflow-hidden rounded-xl border border-white/10 bg-white/5"
+                >
+                  <Link
+                    // ✅ 상세보기 링크는 product-detail?id= 로
+                    href={`/product-detail?id=${p.id}`}
+                    className="block"
+                  >
+                    <div className="relative aspect-[4/5] w-full">
+                      {/* 외부 이미지라면 next.config의 images.domains 설정 필요 */}
                       <Image
                         src={p.imageUrl}
                         alt={p.name}
                         fill
-                        className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        sizes="(max-width: 1024px) 100vw, 25vw"
+                        sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                        className="object-cover"
                         priority={false}
-                        unoptimized={true}
+                        unoptimized
                       />
-                    ) : (
-                      <div className="flex h-full items-center justify-center text-sm text-white/60">
-                        이미지 없음
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="space-y-1 p-4">
-                    <h4 className="line-clamp-2 text-sm font-medium">{p.name}</h4>
-                    <p className="text-sm text-white/70">{p.price.toLocaleString()}원</p>
-                    <span className="inline-flex items-center gap-1 text-xs text-blue-400 underline">
-                      상세보기
-                    </span>
-                  </div>
-                </Link>
-              </article>
-            ))}
+                    </div>
+                    <div className="p-3">
+                      <p className="line-clamp-2 text-sm">{p.name}</p>
+                      <p className="mt-1 text-sm font-semibold">
+                        {typeof p.price === "number" ? p.price.toLocaleString() : p.price}
+                      </p>
+                    </div>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </section>
-  )
+  );
 }
