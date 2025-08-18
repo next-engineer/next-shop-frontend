@@ -1,66 +1,79 @@
 // app/category/[id]/page.tsx
-import Image from "next/image"
+import React from "react"
 import Link from "next/link"
 
-export const dynamicParams = false; // 정적 export에서는 동적 파라미터 허용 X
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || ""
 
-export function generateStaticParams() {
-  // 카테고리 id가 1~5 라고 가정 (필요시 여기 목록만 수정)
+type Product = {
+  id: number
+  name: string
+  price: number | string
+  imageUrl?: string
+}
+
+type Page<T> = { content?: T[]; items?: T[] }
+
+async function fetchProductsByCategoryId(categoryId: string) {
+  // 👉 실제 API 경로 맞추세요 (필요하면 한 줄만 변경)
+  const url = `${API_BASE}/products/category/${categoryId}?page=0&size=30`
+  const res = await fetch(url, { cache: "no-store" })
+  if (!res.ok) throw new Error(await res.text())
+  const data: Page<Product> | Product[] = await res.json()
+  const list =
+    Array.isArray(data) ? data
+    : Array.isArray(data?.content) ? data.content!
+    : Array.isArray((data as Page<Product>)?.items) ? (data as Page<Product>).items!
+    : []
+  return list
+}
+
+export const dynamicParams = false
+export async function generateStaticParams() {
+  // 필요 카테고리 id 목록
   return ["1", "2", "3", "4", "5"].map((id) => ({ id }))
 }
 
-type Props = { params: { id: string } }
-
-// 카테고리별 상품 30개 요청
-async function getCategoryProducts(id: string) {
-  const base = process.env.NEXT_PUBLIC_API_BASE_URL!
-  const res = await fetch(
-    `${base}/products?categoryId=${id}&page=0&size=30`,
-    {
-      // 정적 export에서 빌드 타임 고정
-      cache: "force-cache",
-    }
-  )
-  if (!res.ok) {
-    throw new Error("카테고리 상품 조회 실패")
-  }
-  return res.json()
+const categoryNames: Record<string, string> = {
+  "1": "모자", "2": "상의", "3": "하의", "4": "아우터", "5": "신발",
 }
 
-export default async function Page({ params }: Props) {
+// ✅ 여기! PageProps 같은 거 절대 쓰지 말고 inline 타입으로 받는다.
+export default async function CategoryPage({
+  params,
+}: {
+  params: { id: string }
+}) {
   const { id } = params
-  const data = await getCategoryProducts(id)
-  const items = data?.content ?? []
+  const products = await fetchProductsByCategoryId(id)
+  const categoryName = categoryNames[id] || `카테고리 #${id}`
 
   return (
-    <main className="container mx-auto max-w-7xl px-4 py-8">
-      <h1 className="text-xl font-semibold mb-6">카테고리 {id}</h1>
+    <main className="container mx-auto px-4 pt-6 pb-16">
+      <h1 className="text-2xl font-bold mb-6">{categoryName}</h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {items.map((p: any) => (
+      <section className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        {products.map((p) => (
           <Link
             key={p.id}
-            // 상세 페이지는 query-string 방식으로 이동 (정적 export 호환)
-            href={`/product-detail?id=${p.id}`}
-            className="block group"
+            href={`/product/${p.id}`}
+            className="block rounded-lg overflow-hidden border hover:shadow"
           >
-            {/* next/image 사용 시 외부 도메인이면 next.config의 images 설정 필요 */}
-            <Image
-              src={p.imageUrl}
+            <img
+              src={(p as any).thumbnailUrl || (p as any).thumbnail || p.imageUrl || "/placeholder.jpg"}
               alt={p.name}
-              width={600}
-              height={600}
-              className="rounded-lg object-cover aspect-square"
+              loading="lazy"
+              className="w-full h-52 object-cover bg-neutral-100"
+              referrerPolicy="no-referrer"
             />
-            <div className="mt-2">
-              <div className="text-sm">{p.name}</div>
-              <div className="text-base font-semibold">
-                {p.price?.toLocaleString?.() ?? p.price}원
+            <div className="p-3">
+              <div className="text-sm line-clamp-2">{p.name}</div>
+              <div className="mt-1 font-semibold">
+                {typeof p.price === "number" ? p.price.toLocaleString() : p.price}
               </div>
             </div>
           </Link>
         ))}
-      </div>
+      </section>
     </main>
   )
 }
