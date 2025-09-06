@@ -6,37 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="1c449bd2-8d8f-4231-95c7-f1b92268ef3f" name="변경" comment="안쓰는 파일 삭제">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/app-build-manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/.next/app-build-manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/0.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/0.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/11.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/11.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/2.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/2.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/4.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/4.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/6.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/6.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/7.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/7.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/9.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/9.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/index.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/index.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/client-development/index.pack.gz.old" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/client-development/index.pack.gz.old" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/1.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/1.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/14.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/14.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/3.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/3.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/4.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/4.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/5.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/5.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/8.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/8.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/index.pack.gz" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/index.pack.gz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/cache/webpack/server-development/index.pack.gz.old" beforeDir="false" afterPath="$PROJECT_DIR$/.next/cache/webpack/server-development/index.pack.gz.old" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/react-loadable-manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/.next/react-loadable-manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/server/app-paths-manifest.json" beforeDir="false" afterPath="$PROJECT_DIR$/.next/server/app-paths-manifest.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/server/app/page.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/server/app/page.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/server/app/page_client-reference-manifest.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/server/app/page_client-reference-manifest.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/server/middleware-react-loadable-manifest.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/server/middleware-react-loadable-manifest.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/server/vendor-chunks/@radix-ui.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/server/vendor-chunks/@radix-ui.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/server/vendor-chunks/lucide-react.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/server/vendor-chunks/lucide-react.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/server/webpack-runtime.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/server/webpack-runtime.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/static/chunks/app/layout.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/static/chunks/app/layout.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/static/chunks/webpack.js" beforeDir="false" afterPath="$PROJECT_DIR$/.next/static/chunks/webpack.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/static/css/app/layout.css" beforeDir="false" afterPath="$PROJECT_DIR$/.next/static/css/app/layout.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.next/trace" beforeDir="false" afterPath="$PROJECT_DIR$/.next/trace" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/next-env.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/next-env.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/api.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,18 +21,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "MinDongIl"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;MinDongIl&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/next-engineer/next-shop-frontend",
-    "accountId": "80134dd1-e6cb-456b-87a6-929194d16581"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/next-engineer/next-shop-frontend&quot;,
+    &quot;accountId&quot;: &quot;80134dd1-e6cb-456b-87a6-929194d16581&quot;
   }
-}]]></component>
+}</component>
   <component name="KubernetesApiPersistence">{}</component>
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
@@ -82,7 +52,8 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "api-test",
-    "last_opened_file_path": "D:/Project/next-shop-frontend-main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/test/next-shop-frontend(api-test)",
     "node.js.detected.package.eslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
@@ -91,7 +62,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="npm.Next.js: 서버 측">
+  <component name="RunManager">
     <configuration name="Next.js: 클라이언트 측에서 디버그" type="JavascriptDebugType" uri="http://localhost:3000/">
       <method v="2" />
     </configuration>
@@ -105,14 +76,6 @@
       <envs />
       <method v="2" />
     </configuration>
-  </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-fbdcb00ec9e3-intellij.indexing.shared.core-IU-251.26927.53" />
-        <option value="bundled-js-predefined-d6986cc7102b-09060db00ec0-JavaScript-IU-251.26927.53" />
-      </set>
-    </attachedChunks>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">

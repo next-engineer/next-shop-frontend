@@ -2,7 +2,7 @@ export async function apiGet<T>(
   path: string,
   params?: Record<string, string | number | boolean | undefined>
 ) {
-  const base = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
+  const base = process.env.NEXT_PUBLIC_PURCHASE_API_BASE_URL || "http://localhost:8080";
   const url = new URL(path, base);
   if (params) {
     Object.entries(params).forEach(([k, v]) => {

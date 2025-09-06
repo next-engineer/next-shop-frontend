@@ -1,0 +1,24 @@
+version: 1
+applications:
+  - appRoot: .
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - npm run build    # next build + export (next.config.js의 output:'export')
+        postBuild:
+          commands:
+            # 기존 CloudFront가 바라보는 S3 버킷으로 업로드
+            - aws s3 sync ./out s3://$DEPLOY_BUCKET/ --delete
+            # 캐시 무효화
+            - aws cloudfront create-invalidation --distribution-id $CF_DIST_ID --paths "/*"
+      artifacts:
+        baseDirectory: out
+        files:
+          - '**/*'
+      cache:
+        paths:
+          - node_modules/**/*
